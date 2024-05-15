@@ -6,13 +6,13 @@ const fs = require('fs');
 const url = process.argv[2];
 const file = process.argv[3];
 
-request.get(url, (error, response, body) => {
-    if (error) {
-        console.error(error);
+request.get(url, function(err, response, body) {
+    if (err) {
+        console.error(err);
     } else if (response.statusCode !== 200) {
         console.error('Invalid response:', response.statusCode);
     } else {
-        fs.writeFile(file, body, { encoding: 'utf-8' }, err => {
+        fs.writeFile(file, body, { encoding: 'utf-8' }, function(err) {
             if (err) {
                 console.error(err);
             } else {
