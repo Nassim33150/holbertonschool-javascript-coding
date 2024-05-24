@@ -1,18 +1,13 @@
-// 1-stdin.js
+process.stdout.write('Welcome to Holberton School, what is your name?\n');
 
-console.log('Welcome to Holberton School, what is your name?');
+process.stdin.on('readable', () => {
+  const r = process.stdin.read();
 
-process.stdin.setEncoding('utf8');
-
-process.stdin.on('data', (input) => {
-    const name = input.trim();
-    
-    console.log(`Your name is: ${name}`);
-    
-    process.stdin.end();
+  if (r) {
+    process.stdout.write(`Your name is: ${r}`);
+  }
 });
 
 process.stdin.on('end', () => {
-    console.log('This important software is now closing');
+  process.stdout.write('This important software is now closing\n');
 });
-
