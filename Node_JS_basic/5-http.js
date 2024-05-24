@@ -1,37 +1,33 @@
-// 5-http.js
-const http = require('http');
-const countStudents = require('./3-read_file_async');
+const fs = require('fs').promises;
 
-const app = http.createServer((req, res) => {
-    const { url } = req;
+// Reading a file asynchronously with Node JS
 
-    if (url === '/') {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
-        res.end('Hello Holberton School!');
-    } else if (url === '/students') {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
+async function countStudents(path) {
+  try {
+    const studentData = await fs.readFile(path, 'utf8');
+    const students = studentData
+      .split('\n')
+      .filter((student) => student.length > 0)
+      .map((student) => student.split(','));
 
-        const database = process.argv[2];
+    students.shift();
+    console.log(`Number of students: ${students.length}`);
+    const filedOfStudy = {};
+    students.forEach((student) => {
+      if (!filedOfStudy[student[3]]) filedOfStudy[student[3]] = [];
+      filedOfStudy[student[3]].push(student[0]);
+    });
 
-        countStudents(database)
-            .then((data) => {
-                res.end(`This is the list of our students\n${data}`);
-            })
-            .catch((error) => {
-                res.end(`This is the list of our students\n${error.message}`);
-            });
-    } else {
-        res.statusCode = 404;
-        res.setHeader('Content-Type', 'text/plain');
-        res.end('Not Found');
-    }
-});
+    Object.keys(filedOfStudy).forEach((key) => {
+      console.log(
+        `Number of students in ${key}: ${
+          filedOfStudy[key].length
+        }. List: ${filedOfStudy[key].join(', ')}`,
+      );
+    });
+  } catch (error) {
+    throw new Error('Cannot load the database');
+  }
+}
 
-const port = 1245;
-app.listen(port, () => {
-    console.log(`Server is listening on port ${port}`);
-});
-
-module.exports = app;
+module.exports = countStudents;
